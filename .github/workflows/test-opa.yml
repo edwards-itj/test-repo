@@ -53,6 +53,6 @@ jobs:
       - name: Run OPA Composite Workflow
         uses: edwards-itj/.github-workflows/actions/opa@main
         with:
-          tf_plan_json: 'terraform-plan.json'
+          tf_plan_json: ${{ env.PLAN_JSON }}
           policy_name: 'terraform'
           opa_version: 'latest'
