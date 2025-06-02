@@ -1,0 +1,39 @@
+name: Test OPA
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  opa-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Plan
+        run: terraform plan -out=tfplan
+
+      - name: Convert plan to JSON
+        run: terraform show -json tfplan > terraform-plan.json
+
+      - name: Output plan JSON as environment variable
+        id: plan_json
+        run: |
+          PLAN_JSON=$(cat terraform-plan.json | jq -c .)
+          echo "PLAN_JSON=$PLAN_JSON" >> $GITHUB_ENV
+
+      - name: Run OPA Composite Workflow
+        uses: edwards-itj/.github-workflows/actions/opa@main
+        with:
+          tf_plan_json: 'terraform-plan.json'
+          policy_name: 'terraform'
+          opa_version: 'latest'
