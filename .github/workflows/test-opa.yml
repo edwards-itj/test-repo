@@ -17,6 +17,7 @@ jobs:
     permissions:
       contents: read
       id-token: write
+      pull-requests: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -56,3 +57,4 @@ jobs:
           tf_plan_json: ${{ env.PLAN_JSON }}
           policy_name: 'terraform'
           opa_version: 'latest'
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
