@@ -58,3 +58,14 @@ jobs:
           policy_name: 'terraform'
           opa_version: 'latest'
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+      - name: Check OPA Result
+        id: opa_eval
+        run: |
+          if [ "${{ steps.opa_eval.outputs.OPA_RESULT }}" != "[]" ]; then
+            echo "OPA policy denied the Terraform file."
+          else
+            echo "OPA policy passed."
+          fi
+          echo "${{ steps.opa_eval.outputs.OPA_RESULT }}"
+        working-directory: ${{ github.action_path }}
